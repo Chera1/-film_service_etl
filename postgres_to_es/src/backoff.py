@@ -3,6 +3,8 @@ from functools import wraps
 
 import psycopg2
 
+from .log_writer import logger
+
 
 def backoff(start_sleep_time: float = 0.1, factor: int = 2, border_sleep_time: int = 10):
     """
@@ -34,7 +36,7 @@ def backoff(start_sleep_time: float = 0.1, factor: int = 2, border_sleep_time: i
                     )
                     n += 1
                     time.sleep(t)
-                    print("Waiting time is ", t)
+                    logger.error("PG connection is broken. Reconnection after %s seconds", t)
 
         return inner
 

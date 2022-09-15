@@ -1,20 +1,12 @@
 import json
-import os
 import time
 from functools import wraps
 
-from dotenv import load_dotenv
 from elasticsearch import Elasticsearch, exceptions
 
+from postgres_to_es.config.settings import EsSettings, MainTimingSettings
+from .log_writer import logger
 from .models import FilmWork
-
-
-load_dotenv()
-ES_CONFIG = {
-    "host": os.environ.get("ES_HOST"),
-    "port": os.environ.get("ES_PORT"),
-}
-ES_CONNECTION_WAIT_TIME = 1
 
 
 def retry_es(func):
@@ -31,7 +23,7 @@ def retry_es(func):
             try:
                 return func(*args, **kwargs)
             except exceptions.ConnectionError:
-                print("ES request error!")
+                logger.error("ES request error!")
                 cls._connect()
 
     return wrapper
@@ -41,6 +33,8 @@ class ElasticLoader:
     """Класс загрузки данных в Elasticsearch."""
 
     def __init__(self):
+        self.__es_config = EsSettings().dict()
+        self.__connect_wait_time = MainTimingSettings().es_connect_wait_time
         self.__es = None
         self._connect()
         self.__create_index()
@@ -48,19 +42,19 @@ class ElasticLoader:
     def _connect(self) -> None:
         """Метод для инициализации подключения к Elasticsearch."""
 
-        self.__es = Elasticsearch([ES_CONFIG], timeout=300)
+        self.__es = Elasticsearch([self.__es_config], timeout=300)
         while not self.__es.ping():
-            self.__es = Elasticsearch([ES_CONFIG], timeout=300)
-            time.sleep(ES_CONNECTION_WAIT_TIME)
-            print("Waiting connecting to elasticsearch...")
-        print("Elasticsearch is connected!")
+            self.__es = Elasticsearch([self.__es_config], timeout=300)
+            time.sleep(self.__connect_wait_time)
+            logger.error("Waiting connecting to elasticsearch...")
+        logger.info("Elasticsearch is connected!")
 
     @retry_es
     def __create_index(self) -> None:
         """Метод создания индекса в Elasticsearch."""
 
         if self.__es.indices.exists(index="movies"):
-            print('Index "movies" already exists')
+            logger.warning('Index "movies" already exists')
         else:
             with open("es_index.json", "r") as f:
                 es_index = json.load(f)
@@ -69,7 +63,7 @@ class ElasticLoader:
                 mappings=es_index["mappings"],
                 settings=es_index["settings"],
             )
-            print('Index "movies" was created')
+            logger.info("Index 'movies' was created")
 
     @retry_es
     def upload_filmworks(self, filmworks: list[FilmWork]) -> None:
@@ -83,4 +77,4 @@ class ElasticLoader:
         for filmwork in filmworks:
             body += filmwork.to_es_type()
         self.__es.bulk(filter_path="items.*.error", body=body)
-        print("Index was loaded to ES!")
+        logger.info("Index was loaded to ES!")

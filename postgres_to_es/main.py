@@ -1,12 +1,13 @@
 import time
 
+from config.settings import MainTimingSettings
 from src.elastic_loader import ElasticLoader
 from src.postgres_extractor import PgExtractor
 from src.sql_queries import filmwork_query, genre_query, person_query
 from src.state_storage import JsonFileStorage, State
 
 
-REFRESH_TIME = 5
+REFRESH_TIME = MainTimingSettings().etl_refresh_time
 
 
 def run_es_loader(

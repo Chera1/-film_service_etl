@@ -4,7 +4,6 @@ version = "0.1.0"
 description = "Practicum sprint 3 task"
 authors = ["iManapov <manapovilnar@gmail.com>"]
 readme = "README.md"
-packages = [{include = "postgres_to_es"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"

@@ -1,32 +1,22 @@
-import os
-
 import psycopg2
-from dotenv import load_dotenv
 from psycopg2.extras import DictCursor
 
-from .models import FilmWork
-
+from postgres_to_es.config.settings import MainTimingSettings, PgSettings
 from .backoff import backoff
-
-
-load_dotenv()
-DSN = {
-    "dbname": os.environ.get("DB_NAME"),
-    "user": os.environ.get("DB_USER"),
-    "password": os.environ.get("DB_PASSWORD"),
-    "host": os.environ.get("DB_HOST", "127.0.0.1"),
-    "port": os.environ.get("DB_PORT", 5432),
-}
+from .log_writer import logger
+from .models import FilmWork
 
 
 class PgExtractor:
     """Класс для выгрузки данных из Postgres."""
 
-    __start_sleep_time = 0.1
-    __factor = 2
-    __border_sleep_time = 10
+    timing_settings = MainTimingSettings()
+    __start_sleep_time = timing_settings.backoff_start_sleep_time
+    __factor = timing_settings.backoff_factor
+    __border_sleep_time = timing_settings.backoff_border_sleep_time
 
     def __init__(self):
+        self.__dsn = PgSettings().dict()
         self.__connection = None
         self.__cursor = None
         self.__connect()
@@ -35,9 +25,9 @@ class PgExtractor:
     def __connect(self) -> None:
         """Метод инициализирующий подключение к Postgres."""
 
-        self.__connection = psycopg2.connect(**DSN)
+        self.__connection = psycopg2.connect(**self.__dsn)
         self.__cursor = self.__connection.cursor(cursor_factory=DictCursor)
-        print("Postgres connected!")
+        logger.info("Postgres connected!")
 
     def load_filmworks(self, query: str, modified: str) -> list[FilmWork]:
         """
@@ -53,7 +43,7 @@ class PgExtractor:
         except psycopg2.OperationalError:
             self.__connect()
             self.__cursor.execute(query, (modified,))
-        print("Data extract from PG")
+        logger.info("Data extract from PG")
         while rows := self.__cursor.fetchmany(100):
             yield [FilmWork(**row) for row in rows]
 
