@@ -9,6 +9,7 @@ SELECT
    fw.type,
    fw.created,
    fw.modified,
+   fw.creation_date,
    COALESCE (
        json_agg(
            DISTINCT jsonb_build_object(
@@ -54,6 +55,7 @@ SELECT
    fw.description,
    fw.rating,
    fw.type,
+   fw.creation_date,
    min(p.created) as created,
    max(p.modified) as modified,
    COALESCE (
@@ -101,6 +103,7 @@ SELECT
    fw.description,
    fw.rating,
    fw.type,
+   fw.creation_date,
    min(g.created) as created,
    max(g.modified) as modified,
    COALESCE (

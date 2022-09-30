@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Optional
 
 from pydantic import BaseModel
@@ -15,6 +15,7 @@ class FilmWork(BaseModel):
     type: str
     created: datetime
     modified: datetime
+    creation_date: Optional[date]
     actors: list[Optional[dict]]
     writers: list[Optional[dict]]
     directors: list[Optional[dict]]
@@ -33,6 +34,7 @@ class FilmWork(BaseModel):
             "title": self.title,
             "description": self.description,
             "imdb_rating": self.rating,
+            "creation_date": self.creation_date,
             "actors": self.actors,
             "actors_names": [actor.get("name") for actor in self.actors],
             "director": [director.get("name") for director in self.directors],
