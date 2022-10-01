@@ -1,10 +1,10 @@
 import psycopg2
-from psycopg2.extras import DictCursor
+from psycopg2.extras import DictCursor, register_uuid
 
 from postgres_to_es.config.settings import MainTimingSettings, PgSettings
 from .backoff import backoff
 from .log_writer import logger
-from .models import FilmWork, Genre
+from .models import FilmWork, Genre, Person
 
 
 class PgExtractor:
@@ -25,16 +25,17 @@ class PgExtractor:
     def __connect(self) -> None:
         """Метод инициализирующий подключение к Postgres."""
 
+        register_uuid()
         self.__connection = psycopg2.connect(**self.__dsn)
         self.__cursor = self.__connection.cursor(cursor_factory=DictCursor)
         logger.info("Postgres connected!")
 
     def __execute(self, query, modified):
         try:
-            self.__cursor.execute(query, (modified,))
+            self.__cursor.execute(query, {'modified': modified})
         except psycopg2.OperationalError:
             self.__connect()
-            self.__cursor.execute(query, (modified,))
+            self.__cursor.execute(query, {'modified': modified})
         return self.__cursor
 
     def load_filmworks(self, query: str, modified: str) -> list[FilmWork]:
@@ -47,7 +48,7 @@ class PgExtractor:
         """
 
         cursor = self.__execute(query, modified)
-        logger.info("Data extract from PG")
+        logger.info("Data extract filmworks from PG")
         while rows := cursor.fetchmany(100):
             yield [FilmWork(**row) for row in rows]
 
@@ -61,9 +62,24 @@ class PgExtractor:
         """
 
         cursor = self.__execute(query, modified)
-        logger.info("Data extract from PG")
+        logger.info("Data extract genres from PG")
         while rows := cursor.fetchmany(100):
             yield [Genre(**row) for row in rows]
+
+    def load_persons(self, query: str, modified: str) -> list[Person]:
+        """
+        Метод (генератор) выгрузки персон из Postgres.
+
+        :param query: SQL запрос
+        :param modified: Дата и время модификации записи в таблице
+        :return: Список персон
+        """
+
+        cursor = self.__execute(query, modified)
+        logger.info("Data extract persons from PG")
+        logger.info(cursor.query)
+        while rows := cursor.fetchmany(100):
+            yield [Person(**row) for row in rows]
 
     def __del__(self):
         for c in (self.__cursor, self.__connection):

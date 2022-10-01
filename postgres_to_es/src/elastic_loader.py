@@ -6,7 +6,7 @@ from elasticsearch import Elasticsearch, exceptions
 
 from postgres_to_es.config.settings import EsSettings, MainTimingSettings
 from .log_writer import logger
-from .models import Genre, FilmWork
+from .models import FilmWork, Genre, Person
 
 
 def retry_es(func):
@@ -37,8 +37,7 @@ class ElasticLoader:
         self.__connect_wait_time = MainTimingSettings().es_connect_wait_time
         self.__es = None
         self._connect()
-        self.__create_filmwork_index()
-        self.__create_genre_index()
+        self.__create_indexes()
 
     def _connect(self) -> None:
         """Метод для инициализации подключения к Elasticsearch."""
@@ -50,11 +49,12 @@ class ElasticLoader:
             logger.error("Waiting connecting to elasticsearch...")
         logger.info("Elasticsearch is connected!")
 
-    def __create_filmwork_index(self):
-        self.__create_index('movies', "es_index/filmwork_es_index.json")
+    def __create_indexes(self):
+        """Метод создания индексов."""
 
-    def __create_genre_index(self):
+        self.__create_index('movies', "es_index/filmwork_es_index.json")
         self.__create_index('genres', "es_index/genre_es_index.json")
+        self.__create_index('persons', "es_index/person_es_index.json")
 
     @retry_es
     def __create_index(self, index_name: str, index_filepath: str) -> None:
@@ -97,5 +97,19 @@ class ElasticLoader:
         body = []
         for genre in genres:
             body += genre.to_es_type()
+        self.__es.bulk(filter_path="items.*.error", body=body)
+        logger.info("Index was loaded to ES!")
+
+    @retry_es
+    def upload_persons(self, persons: list[Person]) -> None:
+        """
+        Метод загрузки персон в Elasticsearch.
+
+        :param persons: список персон для загрузки
+        """
+
+        body = []
+        for person in persons:
+            body += person.to_es_type()
         self.__es.bulk(filter_path="items.*.error", body=body)
         logger.info("Index was loaded to ES!")

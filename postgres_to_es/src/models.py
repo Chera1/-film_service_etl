@@ -68,3 +68,30 @@ class Genre(BaseModel):
             "description": self.description
         }
         return [first_row, second_row]
+
+
+class Person(BaseModel):
+    """Класс для персон."""
+
+    id: uuid.UUID
+    full_name: str
+    created: datetime
+    modified: datetime
+    role: list[str]
+    film_ids: list[uuid.UUID]
+
+    def to_es_type(self) -> list[dict]:
+        """
+        Метод для преобразования экземпляра в список, пригодный для загрузки в Elasticsearch.
+
+        :return: Список для загрузки в Elasticsearch
+        """
+
+        first_row = {"index": {"_index": "persons", "_id": self.id}}
+        second_row = {
+            "id": self.id,
+            "full_name": self.full_name,
+            "role": self.role,
+            "film_ids": self.film_ids
+        }
+        return [first_row, second_row]
