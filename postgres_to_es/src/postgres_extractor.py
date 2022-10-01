@@ -4,7 +4,7 @@ from psycopg2.extras import DictCursor
 from postgres_to_es.config.settings import MainTimingSettings, PgSettings
 from .backoff import backoff
 from .log_writer import logger
-from .models import FilmWork
+from .models import FilmWork, Genre
 
 
 class PgExtractor:
@@ -29,23 +29,41 @@ class PgExtractor:
         self.__cursor = self.__connection.cursor(cursor_factory=DictCursor)
         logger.info("Postgres connected!")
 
+    def __execute(self, query, modified):
+        try:
+            self.__cursor.execute(query, (modified,))
+        except psycopg2.OperationalError:
+            self.__connect()
+            self.__cursor.execute(query, (modified,))
+        return self.__cursor
+
     def load_filmworks(self, query: str, modified: str) -> list[FilmWork]:
         """
-        Метод (генератор) выгрузки данных из Postgres.
+        Метод (генератор) выгрузки фильмов из Postgres.
 
         :param query: SQL запрос
         :param modified: Дата и время модификации записи в таблице
         :return: Список фильмов
         """
 
-        try:
-            self.__cursor.execute(query, (modified,))
-        except psycopg2.OperationalError:
-            self.__connect()
-            self.__cursor.execute(query, (modified,))
+        cursor = self.__execute(query, modified)
         logger.info("Data extract from PG")
-        while rows := self.__cursor.fetchmany(100):
+        while rows := cursor.fetchmany(100):
             yield [FilmWork(**row) for row in rows]
+
+    def load_genres(self, query: str, modified: str) -> list[Genre]:
+        """
+        Метод (генератор) выгрузки жанров из Postgres.
+
+        :param query: SQL запрос
+        :param modified: Дата и время модификации записи в таблице
+        :return: Список жанров
+        """
+
+        cursor = self.__execute(query, modified)
+        logger.info("Data extract from PG")
+        while rows := cursor.fetchmany(100):
+            yield [Genre(**row) for row in rows]
 
     def __del__(self):
         for c in (self.__cursor, self.__connection):

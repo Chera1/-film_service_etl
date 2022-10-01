@@ -54,11 +54,15 @@ class LoggerSettings(BaseSettings):
             "filename": "logs.log",
             "formatter": "default_formatter",
         },
+        "stream_handler": {
+            "class": "logging.StreamHandler",
+            "formatter": "default_formatter",
+        },
     }
 
     loggers: dict = {
         "my_logger": {
-            "handlers": ["file_handler"],
+            "handlers": ["stream_handler"],
             "level": "DEBUG",
             "propagate": True,
         }

@@ -1,6 +1,6 @@
 """Список подготовленных SQL запросов."""
 
-filmwork_query = """
+filmwork_fw_query = """
 SELECT
    fw.id,
    fw.title,
@@ -48,7 +48,7 @@ GROUP BY fw.id
 ORDER BY fw.modified
 """
 
-person_query = """
+filmwork_p_query = """
 SELECT
    fw.id,
    fw.title,
@@ -96,7 +96,7 @@ GROUP BY fw.id
 ORDER BY modified
 """
 
-genre_query = """
+filmwork_g_query = """
 SELECT
    fw.id,
    fw.title,
@@ -142,4 +142,16 @@ LEFT JOIN content.person p ON p.id = pfw.person_id
 WHERE g.modified > (%s) AND fw.id IS NOT NULL
 GROUP BY fw.id
 ORDER BY modified
+"""
+
+genre_query = """
+SELECT
+    g.id,
+    g.name,
+    g.description,
+    g.created,
+    g.modified
+FROM content.genre g
+WHERE g.modified > (%s) AND g.id IS NOT NULL
+ORDER BY g.modified
 """

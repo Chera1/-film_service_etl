@@ -43,3 +43,28 @@ class FilmWork(BaseModel):
             "writers_names": [writer.get("name") for writer in self.writers],
         }
         return [first_row, second_row]
+
+
+class Genre(BaseModel):
+    """Класс для жанров."""
+
+    id: uuid.UUID
+    name: str
+    description: Optional[str]
+    created: datetime
+    modified: datetime
+
+    def to_es_type(self) -> list[dict]:
+        """
+        Метод для преобразования экземпляра в список, пригодный для загрузки в Elasticsearch.
+
+        :return: Список для загрузки в Elasticsearch
+        """
+
+        first_row = {"index": {"_index": "genres", "_id": self.id}}
+        second_row = {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description
+        }
+        return [first_row, second_row]
