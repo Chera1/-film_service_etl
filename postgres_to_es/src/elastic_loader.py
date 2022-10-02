@@ -4,7 +4,7 @@ from functools import wraps
 
 from elasticsearch import Elasticsearch, exceptions
 
-from postgres_to_es.config.settings import EsSettings, MainTimingSettings
+from config.settings import EsSettings, MainTimingSettings
 from .log_writer import logger
 from .models import FilmWork, Genre, Person
 

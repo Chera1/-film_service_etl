@@ -1,6 +1,6 @@
 import logging.config
 
-from postgres_to_es.config.settings import LoggerSettings
+from config.settings import LoggerSettings
 
 LOGGING_CONFIG = LoggerSettings().dict()
 logging.config.dictConfig(LOGGING_CONFIG)

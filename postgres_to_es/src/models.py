@@ -74,7 +74,7 @@ class Person(BaseModel):
     """Класс для персон."""
 
     id: uuid.UUID
-    full_name: str
+    name: str
     created: datetime
     modified: datetime
     role: list[str]
@@ -90,7 +90,7 @@ class Person(BaseModel):
         first_row = {"index": {"_index": "persons", "_id": self.id}}
         second_row = {
             "id": self.id,
-            "full_name": self.full_name,
+            "name": self.name,
             "role": self.role,
             "film_ids": self.film_ids
         }

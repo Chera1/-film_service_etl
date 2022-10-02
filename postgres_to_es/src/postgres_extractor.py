@@ -1,7 +1,7 @@
 import psycopg2
 from psycopg2.extras import DictCursor, register_uuid
 
-from postgres_to_es.config.settings import MainTimingSettings, PgSettings
+from config.settings import MainTimingSettings, PgSettings
 from .backoff import backoff
 from .log_writer import logger
 from .models import FilmWork, Genre, Person
@@ -76,8 +76,6 @@ class PgExtractor:
         """
 
         cursor = self.__execute(query, modified)
-        logger.info("Data extract persons from PG")
-        logger.info(cursor.query)
         while rows := cursor.fetchmany(100):
             yield [Person(**row) for row in rows]
 

@@ -159,7 +159,7 @@ ORDER BY g.modified
 person_query = """
 SELECT
     p.id,
-    p.full_name,
+    p.full_name as name,
     p.created,
     p.modified,
     array_agg(DISTINCT pfw.role) as role,
