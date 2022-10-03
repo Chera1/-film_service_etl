@@ -37,7 +37,15 @@ SELECT
        ) FILTER (WHERE p.id IS NOT NULL AND pfw.role = 'director'),
        '[]'
    ) as directors,
-   array_agg(DISTINCT g.name) as genres
+   COALESCE (
+       json_agg(
+           DISTINCT jsonb_build_object(
+               'id', g.id,
+               'name', g.name
+           )
+       ) FILTER (WHERE g.id IS NOT NULL),
+       '[]'
+   ) as genres
 FROM content.film_work fw
 LEFT JOIN content.person_film_work pfw ON pfw.film_work_id = fw.id
 LEFT JOIN content.person p ON p.id = pfw.person_id
@@ -85,7 +93,15 @@ SELECT
        ) FILTER (WHERE p.id IS NOT NULL AND pfw.role = 'director'),
        '[]'
    ) as directors,
-   array_agg(DISTINCT g.name) as genres
+   COALESCE (
+       json_agg(
+           DISTINCT jsonb_build_object(
+               'id', g.id,
+               'name', g.name
+           )
+       ) FILTER (WHERE g.id IS NOT NULL),
+       '[]'
+   ) as genres
 FROM content.person p
 LEFT JOIN content.person_film_work pfw ON pfw.person_id = p.id
 LEFT JOIN content.film_work fw ON fw.id = pfw.film_work_id
@@ -133,7 +149,15 @@ SELECT
        ) FILTER (WHERE p.id IS NOT NULL AND pfw.role = 'director'),
        '[]'
    ) as directors,
-   array_agg(DISTINCT g.name) as genres
+   COALESCE (
+       json_agg(
+           DISTINCT jsonb_build_object(
+               'id', g.id,
+               'name', g.name
+           )
+       ) FILTER (WHERE g.id IS NOT NULL),
+       '[]'
+   ) as genres
 FROM content.genre g
 LEFT JOIN content.genre_film_work gfw ON gfw.genre_id = g.id
 LEFT JOIN content.film_work fw ON fw.id = gfw.film_work_id

@@ -19,7 +19,7 @@ class FilmWork(BaseModel):
     actors: list[Optional[dict]]
     writers: list[Optional[dict]]
     directors: list[Optional[dict]]
-    genres: list[Optional[str]]
+    genres: list[Optional[dict]]
 
     def to_es_type(self) -> list[dict]:
         """
