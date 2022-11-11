@@ -17,7 +17,6 @@ ES_PORT - порт Elastic search
 2. Выполнить команды:
 ```shell
 pip install poetry
-poetry config virtualenvs.create false
 poetry install
 
 cd postgres_to_es
