@@ -77,6 +77,10 @@
         "type": "text",
         "analyzer": "ru_en"
       },
+      "tag": {
+        "type": "text",
+        "analyzer": "ru_en"
+      },
       "director": {
         "type": "text",
         "analyzer": "ru_en"

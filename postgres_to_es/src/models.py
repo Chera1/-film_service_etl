@@ -20,6 +20,7 @@ class FilmWork(BaseModel):
     writers: list[Optional[dict]]
     directors: list[Optional[dict]]
     genres: list[Optional[dict]]
+    tag: Optional[str]
 
     def to_es_type(self) -> list[dict]:
         """
@@ -41,6 +42,7 @@ class FilmWork(BaseModel):
             "genre": self.genres,
             "writers": self.writers,
             "writers_names": [writer.get("name") for writer in self.writers],
+            "tag": self.tag,
         }
         return [first_row, second_row]
 
