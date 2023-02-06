@@ -21,6 +21,7 @@ class FilmWork(BaseModel):
     directors: list[Optional[dict]]
     genres: list[Optional[dict]]
     tag: Optional[str]
+    price: float
 
     def to_es_type(self) -> list[dict]:
         """
@@ -43,6 +44,7 @@ class FilmWork(BaseModel):
             "writers": self.writers,
             "writers_names": [writer.get("name") for writer in self.writers],
             "tag": self.tag,
+            "price": self.price,
         }
         return [first_row, second_row]
 

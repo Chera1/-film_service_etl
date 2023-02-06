@@ -81,6 +81,9 @@
         "type": "text",
         "analyzer": "ru_en"
       },
+      "price": {
+        "type": "float"
+      },
       "director": {
         "type": "text",
         "analyzer": "ru_en"
