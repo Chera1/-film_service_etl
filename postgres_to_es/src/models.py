@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 
 class FilmWork(BaseModel):
-    """Модель для фильма."""
+    """Film model"""
 
     id: uuid.UUID
     title: str
@@ -25,9 +25,9 @@ class FilmWork(BaseModel):
 
     def to_es_type(self) -> list[dict]:
         """
-        Метод для преобразования экземпляра в список, пригодный для загрузки в Elasticsearch.
+        Method for converting film object to a list suitable for loading into Elasticsearch
 
-        :return: Список для загрузки в Elasticsearch
+        :return: list to upload to Elasticsearch
         """
 
         first_row = {"index": {"_index": "movies", "_id": self.id}}
@@ -50,7 +50,7 @@ class FilmWork(BaseModel):
 
 
 class Genre(BaseModel):
-    """Класс для жанров."""
+    """Genre model"""
 
     id: uuid.UUID
     name: str
@@ -60,9 +60,9 @@ class Genre(BaseModel):
 
     def to_es_type(self) -> list[dict]:
         """
-        Метод для преобразования экземпляра в список, пригодный для загрузки в Elasticsearch.
+        Method for converting genre object to a list suitable for loading into Elasticsearch
 
-        :return: Список для загрузки в Elasticsearch
+        :return: list to upload to Elasticsearch
         """
 
         first_row = {"index": {"_index": "genres", "_id": self.id}}
@@ -75,7 +75,7 @@ class Genre(BaseModel):
 
 
 class Person(BaseModel):
-    """Класс для персон."""
+    """Person model"""
 
     id: uuid.UUID
     name: str
@@ -86,9 +86,9 @@ class Person(BaseModel):
 
     def to_es_type(self) -> list[dict]:
         """
-        Метод для преобразования экземпляра в список, пригодный для загрузки в Elasticsearch.
+        Method for converting person object to a list suitable for loading into Elasticsearch
 
-        :return: Список для загрузки в Elasticsearch
+        :return: list to upload to Elasticsearch
         """
 
         first_row = {"index": {"_index": "persons", "_id": self.id}}

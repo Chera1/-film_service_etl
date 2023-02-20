@@ -6,26 +6,26 @@ from typing import Any
 class BaseStorage:
     @abc.abstractmethod
     def save_state(self, state: dict) -> None:
-        """Сохранить состояние в постоянное хранилище"""
+        """Save state"""
         pass
 
     @abc.abstractmethod
     def retrieve_state(self) -> dict:
-        """Загрузить состояние локально из постоянного хранилища"""
+        """Retrieve state from local storage"""
         pass
 
 
 class JsonFileStorage(BaseStorage):
-    """Класс для работы с локальным json хранилищем."""
+    """Class to work with local JSON store"""
 
     def __init__(self, file_path: str = None):
         self.file_path = file_path
 
     def save_state(self, state: dict) -> None:
         """
-        Метод сохранения состояний.
+        Saves state
 
-        :param state: Состояние
+        :param state: current state
         """
 
         with open(self.file_path, "w") as f:
@@ -33,10 +33,10 @@ class JsonFileStorage(BaseStorage):
 
     def retrieve_state(self) -> dict:
         """
-        Метод получения состояний из локального хранилища.
-        Если такого json файла нет, возвращаем пустой словарь
+        Method for getting states from local storage.
+        If there is no such json file, we return an empty dict
 
-        :return: Словарь состояний
+        :return: state dict
         """
 
         try:
@@ -47,7 +47,7 @@ class JsonFileStorage(BaseStorage):
 
 
 class State:
-    """Класс для хранения состояния при работе с данными."""
+    """Class to store state"""
 
     def __init__(self, storage: BaseStorage):
         self.storage = storage
@@ -55,10 +55,10 @@ class State:
 
     def set_state(self, key: str, value: Any) -> None:
         """
-        Метод установки состояния для определённого ключа.
+        Sets state by key
 
-        :param key: Ключ состояния
-        :param value: Значение состояния
+        :param key: state key
+        :param value: state value
         """
 
         self.state[key] = value
@@ -66,11 +66,11 @@ class State:
 
     def get_state(self, key: str, alternative_state: str) -> Any:
         """
-        Метод получения состояния по определённому ключу.
+        Retrieves state by key
 
-        :param key: Ключ состояния
-        :param alternative_state: Альтернативное значение, если нет значения по искомому ключу
-        :return: Значение состояния
+        :param key: state key
+        :param alternative_state: alternative state
+        :return: state value
         """
 
         return self.state.get(key, alternative_state)

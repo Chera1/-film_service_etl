@@ -1,4 +1,4 @@
-"""Список подготовленных SQL запросов."""
+"""Prepared SQL queries"""
 
 filmwork_fw_query = """
 SELECT

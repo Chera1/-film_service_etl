@@ -12,10 +12,10 @@ REFRESH_TIME = MainTimingSettings().etl_refresh_time
 
 def run_es_loader(state_store: State, etl_steps: dict) -> None:
     """
-    Процедура для запуска ETL процесса.
+    Procedure for start etl process
 
-    :param state_store: хранилище состояний
-    :param etl_steps: сценарий с ETL шагами
+    :param state_store: state store
+    :param etl_steps: etl steps
     """
 
     while True:

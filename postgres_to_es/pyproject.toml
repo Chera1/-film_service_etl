@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "postgres-to-es"
 version = "0.1.0"
-description = "Practicum sprint 3 task"
+description = "Postgres to elasticsearch etl"
 authors = ["iManapov <manapovilnar@gmail.com>"]
 readme = "README.md"
 

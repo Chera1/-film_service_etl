@@ -2,7 +2,7 @@ from pydantic import BaseSettings, Field
 
 
 class PgSettings(BaseSettings):
-    """Конфиг подключения к бд Postgres."""
+    """Postgres connection config"""
 
     dbname: str = Field(..., env="DB_NAME")
     user: str = Field(..., env="DB_USER")
@@ -16,7 +16,7 @@ class PgSettings(BaseSettings):
 
 
 class EsSettings(BaseSettings):
-    """Конфиг подключения к Elasticsearch."""
+    """Elasticsearch connection config"""
 
     host: str = Field(..., env="ES_HOST")
     port: int = Field(..., env="ES_PORT")
@@ -27,7 +27,7 @@ class EsSettings(BaseSettings):
 
 
 class MainTimingSettings(BaseSettings):
-    """Конфиг для определения ожидания процессов."""
+    """Backoff config"""
 
     es_connect_wait_time: int = 1
     etl_refresh_time: int = 5
@@ -37,7 +37,7 @@ class MainTimingSettings(BaseSettings):
 
 
 class LoggerSettings(BaseSettings):
-    """Конфиг логирования."""
+    """Logger config"""
 
     version: int = 1
     disable_existing_loggers: bool = False

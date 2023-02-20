@@ -1,20 +1,21 @@
-# Проектная работа 3 спринта
+# ETL service from Postgres to Elasticsearch
 
-## Запуск ETL
-Для запуска ETL необходимо:
-1. Создать файл `postgres_to_es/config/.env` с параметрами:
+## Local run
+
+Firstly create env file `postgres_to_es/config/.env` with following parameters:
+
 ```dotenv
-DB_NAME - название базы данных
-DB_USER - user базы данных
-DB_PASSWORD - пароль от базы данных
-DB_HOST - хост базы данных
-DB_PORT - порт базы данных
+DB_HOST - Postgres host
+DB_PORT - Postgres port
+DB_NAME - Postgres database name
+DB_USER - Postgres user
+DB_PASSWORD - Postgres password
 
-ES_HOST - хост Elastic search
-ES_PORT - порт Elastic search
+ES_HOST - ElasticSearch host
+ES_PORT - ElasticSearch port
 ```
 
-2. Выполнить команды:
+To run etl process execute following command:
 ```shell
 pip install poetry
 poetry install

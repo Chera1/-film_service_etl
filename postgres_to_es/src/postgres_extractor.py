@@ -8,7 +8,7 @@ from .models import FilmWork, Genre, Person
 
 
 class PgExtractor:
-    """Класс для выгрузки данных из Postgres."""
+    """Class to extract data from Postgres"""
 
     timing_settings = MainTimingSettings()
     __start_sleep_time = timing_settings.backoff_start_sleep_time
@@ -23,7 +23,7 @@ class PgExtractor:
 
     @backoff(__start_sleep_time, __factor, __border_sleep_time)
     def __connect(self) -> None:
-        """Метод инициализирующий подключение к Postgres."""
+        """Initialize connection to Postgres"""
 
         register_uuid()
         self.__connection = psycopg2.connect(**self.__dsn)
@@ -40,11 +40,11 @@ class PgExtractor:
 
     def load_filmworks(self, query: str, modified: str) -> list[FilmWork]:
         """
-        Метод (генератор) выгрузки фильмов из Postgres.
+        Yields films from Postgres
 
-        :param query: SQL запрос
-        :param modified: Дата и время модификации записи в таблице
-        :return: Список фильмов
+        :param query: SQL query
+        :param modified: modification datetime
+        :return: films list
         """
 
         cursor = self.__execute(query, modified)
@@ -54,11 +54,11 @@ class PgExtractor:
 
     def load_genres(self, query: str, modified: str) -> list[Genre]:
         """
-        Метод (генератор) выгрузки жанров из Postgres.
+        Yields genres from Postgres
 
-        :param query: SQL запрос
-        :param modified: Дата и время модификации записи в таблице
-        :return: Список жанров
+        :param query: SQL query
+        :param modified: modification datetime
+        :return: genres list
         """
 
         cursor = self.__execute(query, modified)
@@ -68,11 +68,11 @@ class PgExtractor:
 
     def load_persons(self, query: str, modified: str) -> list[Person]:
         """
-        Метод (генератор) выгрузки персон из Postgres.
+        Yields persons from Postgres
 
-        :param query: SQL запрос
-        :param modified: Дата и время модификации записи в таблице
-        :return: Список персон
+        :param query: SQL query
+        :param modified: modification datetime
+        :return: persons list
         """
 
         cursor = self.__execute(query, modified)

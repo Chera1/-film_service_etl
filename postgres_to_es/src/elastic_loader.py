@@ -11,9 +11,9 @@ from .models import FilmWork, Genre, Person
 
 def retry_es(func):
     """
-    Декоратор для инициализации повторного подключения.
+    Reconnection decorator
 
-    :return: результат выполнения функции
+    :return: function
     """
 
     @wraps(func)
@@ -30,7 +30,7 @@ def retry_es(func):
 
 
 class ElasticLoader:
-    """Класс загрузки данных в Elasticsearch."""
+    """Elasticsearch loader class"""
 
     def __init__(self):
         self.__es_config = EsSettings().dict()
@@ -40,7 +40,7 @@ class ElasticLoader:
         self.__create_indexes()
 
     def _connect(self) -> None:
-        """Метод для инициализации подключения к Elasticsearch."""
+        """Connects to Elasticsearch"""
 
         self.__es = Elasticsearch([self.__es_config], timeout=300)
         while not self.__es.ping():
@@ -50,7 +50,7 @@ class ElasticLoader:
         logger.info("Elasticsearch is connected!")
 
     def __create_indexes(self):
-        """Метод создания индексов."""
+        """Creates one index in Elasticsearch"""
 
         self.__create_index('movies', "es_index/filmwork_es_index.json")
         self.__create_index('genres', "es_index/genre_es_index.json")
@@ -58,7 +58,7 @@ class ElasticLoader:
 
     @retry_es
     def __create_index(self, index_name: str, index_filepath: str) -> None:
-        """Метод создания индекса в Elasticsearch."""
+        """Creates all indexes in Elasticsearch"""
 
         if self.__es.indices.exists(index=index_name):
             logger.warning(f"Index '{index_name}' already exists")
@@ -75,9 +75,9 @@ class ElasticLoader:
     @retry_es
     def upload_filmworks(self, filmworks: list[FilmWork]) -> None:
         """
-        Метод загрузки фильмов в Elasticsearch.
+        Uploads films to Elasticsearch
 
-        :param filmworks: список фильмов для загрузки
+        :param filmworks: films list to upload
         """
 
         body = []
@@ -89,9 +89,9 @@ class ElasticLoader:
     @retry_es
     def upload_genres(self, genres: list[Genre]) -> None:
         """
-        Метод загрузки жанров в Elasticsearch.
+        Uploads genres to Elasticsearch
 
-        :param genres: список жанров для загрузки
+        :param genres: genres list to upload
         """
 
         body = []
@@ -103,9 +103,9 @@ class ElasticLoader:
     @retry_es
     def upload_persons(self, persons: list[Person]) -> None:
         """
-        Метод загрузки персон в Elasticsearch.
+        Uploads persons to Elasticsearch
 
-        :param persons: список персон для загрузки
+        :param persons: persons list to upload
         """
 
         body = []
